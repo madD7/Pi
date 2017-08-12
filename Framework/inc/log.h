@@ -55,12 +55,15 @@ Revision History ***************************************************************
 */
 
 Status_Type LOG_Init(short sval);
+void LOG_SetVerbosity(short sval);
 void LOG_LogMsg(short sverb, const char* msg, ...);
 
+#define LOG_PRINT(msg, ...)				LOG_LogMsg((-1), msg, ## __VA_ARGS__)
 #define LOG_ERROR(msg, ...)				LOG_LogMsg(LOGS_ERROR, msg, ## __VA_ARGS__)
 #define LOG_ERR_DETAILS(msg, ...)		LOG_LogMsg(LOGS_ERR_DETAIL, msg, ## __VA_ARGS__)
 #define LOG_WARN(msg, ...)				LOG_LogMsg(LOGS_WARN, msg, ## __VA_ARGS__)
 #define LOG_INFO(msg, ...)				LOG_LogMsg(LOGS_INFO, msg, ## __VA_ARGS__)
+
 
 /*
 * @}

@@ -36,6 +36,18 @@ static short sVerbosity=LOGS_ERROR;
 /* Functions ******************************************************************************
 * @{
 */
+/***************************************************************************************
+Description	: 
+Input		: 
+Output		: None
+Returns		: 
+Notes		: None
+Published	: No
+*/
+void LOG_SetVerbosity(short sval)
+{
+	sVerbosity = sval;
+}
 
 /***************************************************************************************
 Description	: Initialize debug print
@@ -47,11 +59,11 @@ Published	: No
 */
 Status_Type LOG_Init(short sval)
 {
-
-	sVerbosity = sval;
-
+	LOG_SetVerbosity(sval);
+	
 	return StatusSuccess;
 }
+
 
 /***************************************************************************************
 Description	: 
@@ -66,17 +78,29 @@ void LOG_LogMsg(short sverb, const char* msg, ...)
 	va_list argptr;
 	short sstderrflg=0;
 
-	if(sverb < LOGS_INFO )
-		sstderrflg = 1;
-
 	if(sverb <= sVerbosity)
 	{
+		if(sverb < LOGS_INFO )
+		{
+			sstderrflg = 1;
+
+			if(sverb == LOGS_ERROR)
+				fprintf(stderr, "%s", "ERROR: ");
+			else if(sverb == LOGS_WARN)
+				fprintf(stderr, "%s", "WARN: ");
+		}
+		else if(sverb == LOGS_INFO)
+		{
+			fprintf(stdout, "%s", "INFO: ");
+		}
+
 		va_start(argptr, msg);
-		vfprintf(stdout, msg, argptr);
 
 		if(sstderrflg)
 			vfprintf(stderr, msg, argptr);
-
+		else
+			vfprintf(stdout, msg, argptr);
+		
 		va_end(argptr);
 	}
 }

@@ -70,8 +70,8 @@ Revision History ***************************************************************
 * @{
 */
 
-Status_Type CLIPARSER_ParseCommandLine(int argc, char* argv[]);
-Status_Type CLIPARSER_GetParamValue(unsigned char param, char** pval);
+Status_Type CLIPARSER_ParseCommandLine(int iArgc, char* cpaArgv[]);
+Status_Type CLIPARSER_GetParamValue(short sParam, char** ppcVal);
 Status_Type CLIPARSER_CheckParamVal(char *pctemp);
 /*
 * @}
