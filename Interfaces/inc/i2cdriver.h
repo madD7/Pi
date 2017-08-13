@@ -64,10 +64,8 @@ typedef struct
 Status_Type I2CDRIVER_Open(I2CCfg_Type* pI2cCfg );
 Status_Type I2CDRIVER_Close();
 Status_Type I2CDRIVER_Write(char* pcdata, int isize);
-Status_Type I2CDRIVER_Writechar(char cdata);
 Status_Type I2CDRIVER_WriteString(char* pcdata);
 Status_Type I2CDRIVER_Read(char* pcdata, int isize, int* pirdbytes);
-Status_Type I2CDRIVER_Readchar(char* pcdata);
 
 /*
 * @}

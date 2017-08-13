@@ -18,6 +18,7 @@ Revision History ***************************************************************
 */
 #include "i2cdriver.h"
 #include "log.h"
+#include <string.h>
 
 /*
 * @}
@@ -28,7 +29,7 @@ Revision History ***************************************************************
 * @{
 */
 static int iFd;					// File Descriptor
-static I2cCfg_Type I2cCfg = {0};
+static I2CCfg_Type I2cCfg = {0};
 /*
 * @}
 */
@@ -55,7 +56,7 @@ Status_Type I2CDRIVER_Open(I2CCfg_Type* pcfg)
 		return StatusInvalArgs;
 	}
 
-	iFd = open(I2C_FILEPATH);
+	iFd = open(I2C_FILEPATH, O_RDWR);
 	if ( iFd < 0)
 	{
 		LOG_ERROR("Unable to Open I2C device port\n");
@@ -85,7 +86,7 @@ Published	: No
 */
 Status_Type I2CDRIVER_Close()
 {
-	if( fclose(iFd) < 0)
+	if( close(iFd) < 0)
 	{
 		LOG_ERROR("Failed to close device\n");
 		return StatusFail;
@@ -153,21 +154,6 @@ Returns		:
 Notes		: None
 Published	: No
 */
-Status_Type I2CDRIVER_WriteChar(char data)
-{
-	return I2CDRIVER_Write(&data, 1);
-}
-
-
-
-/***************************************************************************************
-Description	: 
-Input		: 
-Output		: None
-Returns		: 
-Notes		: None
-Published	: No
-*/
 Status_Type I2CDRIVER_WriteString(char* pcdata)
 {
 	Status_Type status=0;
@@ -178,9 +164,9 @@ Status_Type I2CDRIVER_WriteString(char* pcdata)
 		return StatusInvalArgs;
 	}
 	
-	while ( *pcdata != NULL)
+	while ( *pcdata != '\0')
 	{
-		if( (status = I2CDRIVER_WriteChar(*pcdata, 1)) != StatusSuccess)
+		if( (status = I2CDRIVER_Write(pcdata, 1)) != StatusSuccess)
 			return status;
 
 		pcdata++;
@@ -205,7 +191,7 @@ Status_Type I2CDRIVER_Read(char* pcdata, int isize, int* pirdbytes)
 	int ibytesread=0;
 	int iretries=0;
 
-	pirdbytes = ibytesread;
+	*pirdbytes = ibytesread;
 
 	if( isize == 0)
 	{
@@ -237,22 +223,6 @@ Status_Type I2CDRIVER_Read(char* pcdata, int isize, int* pirdbytes)
 	}
 
 	return StatusSuccess;
-}
-
-
-
-
-/***************************************************************************************
-Description	: 
-Input		: 
-Output		: None
-Returns		: 
-Notes		: None
-Published	: No
-*/
-Status_Type I2CDRIVER_Readchar(char* pcdata)
-{
-	return I2CDRIVER_Read(pcdata, 1);
 }
 
 

@@ -234,6 +234,8 @@ int main(int iArgc, char *cpaArgv[])
 
 		PrintData(cbuf, ibytes);
 
+		imemcount -= ibytes;
+
 		if(status != StatusSuccess)
 			return status;
 	}

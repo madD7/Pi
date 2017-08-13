@@ -50,7 +50,7 @@ endif
 
 VPATH:= $(SRCDIR_PATH)
 
-SRCS=main.c cliparser.c	
+SRCS=main.c cliparser.c	i2cdriver.c
 OBJS=$(patsubst %.c, $(OBJDIR_PATH)/%.o, $(SRCS))
 
 .PHONY: all clean build
