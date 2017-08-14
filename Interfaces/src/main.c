@@ -147,6 +147,15 @@ int CheckParameters()
 
 
 
+
+/***************************************************************************************
+Description	: 
+Input		: 
+Output		: None
+Returns		: 
+Notes		: None
+Published	: No
+*/
 Status_Type PrintData(char *pcdata, int isize)
 {
 	short sbytecnt=0, swordcnt=0, sitr=0, swordprnt=0;
@@ -168,6 +177,15 @@ return StatusSuccess;
 
 
 
+
+/***************************************************************************************
+Description	: 
+Input		: 
+Output		: None
+Returns		: 
+Notes		: None
+Published	: No
+*/
 int main(int iArgc, char *cpaArgv[])
 {
 	Status_Type status=StatusSuccess;
