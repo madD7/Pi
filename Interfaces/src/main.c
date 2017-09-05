@@ -28,7 +28,8 @@ Revision History ***************************************************************
 /* Variables ******************************************************************************
 * @{
 */
-const char* const cpaComType[] = { I2C_NAME_STRING
+const char* const cpaComType[] = { "NO DEVICE", 
+									I2C_NAME_STRING
 									};
 
 int ichno=-1;
@@ -146,6 +147,15 @@ int CheckParameters()
 
 
 
+
+/***************************************************************************************
+Description	: 
+Input		: 
+Output		: None
+Returns		: 
+Notes		: None
+Published	: No
+*/
 Status_Type PrintData(char *pcdata, int isize)
 {
 	short sbytecnt=0, swordcnt=0, sitr=0, swordprnt=0;
@@ -162,39 +172,27 @@ Status_Type PrintData(char *pcdata, int isize)
 		return StatusInvalArgs;
 	}
 
-	LOG_PRINT("\t");
-
-	for(sbytecnt=0; sbytecnt < 16; sbytecnt++)
-		LOG_PRINT("0x%02x ", sbytecnt);
-
-	sitr = isize/16 + (isize%16?1:0);
-	do
-	{
-		LOG_PRINT("\n0x%x\t", swordcnt);
-		
-		swordprnt = (swordcnt==sitr?isize%16:16);
-
-		for(sbytecnt=0; sbytecnt < swordprnt; sbytecnt++)
-		{
-			LOG_PRINT(" %02x  ", *pcdata);
-			pcdata++;
-		}
-
-		swordcnt++;
-	}while(swordcnt < sitr);
-
-	LOG_PRINT("\n");
-	return StatusSuccess;
+return StatusSuccess;
 }
 
 
 
+
+/***************************************************************************************
+Description	: 
+Input		: 
+Output		: None
+Returns		: 
+Notes		: None
+Published	: No
+*/
 int main(int iArgc, char *cpaArgv[])
 {
 	Status_Type status=StatusSuccess;
 	I2CCfg_Type i2ccfg={0};
-	char cbuf[256] = {0,1,2,3,4,5,6,7,8,9};
-	int icnt=0, ibytes=0;
+	char cbuf[1024] = {0,1,2,3};
+	int icnt=0, ibytes=0, istrt=0;
+	int ibytcnt=0;
 
 	status = CLIPARSER_ParseCommandLine(iArgc, cpaArgv);
 	if(status != StatusSuccess)
@@ -212,7 +210,7 @@ int main(int iArgc, char *cpaArgv[])
 
 	if(ichntype == I2C)
 	{
-		i2ccfg.schno = (short) ichno;
+		i2ccfg.schno = ichno;
 		i2ccfg.sdevaddr = (short) iaddr;
 		i2ccfg.saddr = (short) istartaddr;
 		i2ccfg.smemcount = (short) imemcount;
@@ -223,6 +221,17 @@ int main(int iArgc, char *cpaArgv[])
 			i2ccfg.rwflg = 0;
 	}
 
+	status = I2CDRIVER_Open(&i2ccfg);
+	if(status != StatusSuccess)
+	{
+		LOG_ERROR("Unable to Open I2C device\n");
+		return status;
+	}
+
+	LOG_PRINT("\t");
+	for(icnt=0; icnt < 16; icnt++)
+		LOG_PRINT("0x%02x ", icnt);
+
 	while(imemcount)
 	{
 		if(imemcount > sizeof(cbuf))
@@ -230,16 +239,37 @@ int main(int iArgc, char *cpaArgv[])
 		else 
 			icnt = imemcount;
 
-		status = I2CDRIVER_Read(cbuf, icnt, &ibytes);
+		status = I2CDRIVER_Read(&cbuf[istrt], icnt, &ibytes);
+		if(status != StatusSuccess)
+		{
+			LOG_ERROR("Failed to read data on i2cbus\n");
+			break;
+		}
+		
+		for(icnt=0; (icnt*16) < ibytes; icnt++)
+		{
+			LOG_PRINT("\n0x%02x\t", icnt);
+			for(ibytcnt=0; ibytcnt<16; ibytcnt++)
+			{
+				LOG_PRINT(" %02x  ", cbuf[(icnt*16) + ibytcnt]);
+			}
+			
+			LOG_PRINT("\n\t");
+			for(ibytcnt=0; ibytcnt<16; ibytcnt++)
+			{
+				LOG_PRINT("%03d  ", cbuf[(icnt*16) + ibytcnt]);
+			}
+			LOG_PRINT("\n\n");
+		}
 
-		PrintData(cbuf, ibytes);
-
+		istrt += ibytes;
 		imemcount -= ibytes;
 
 		if(status != StatusSuccess)
-			return status;
+			break;
 	}
 
+	I2CDRIVER_Close();
 	return status;
 }
 

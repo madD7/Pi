@@ -17,6 +17,7 @@ Revision History ***************************************************************
 */
 #include "cliparser.h"
 #include "log.h"
+#include <stdlib.h>
 /*
 * @}
 */
@@ -52,6 +53,8 @@ static void __CLIPARSER_PrintHelp()
 			"\t[-c<channel type>] [-n<channel no.>] [-d<device address>] [-o<operation type>]"
 			"[-s<start addr>] [-r<no. of registers/memory locations>]\n"
 			);
+
+	exit (0);
 }
 
 
@@ -102,7 +105,6 @@ Status_Type CLIPARSER_ParseCommandLine(int iArgc, char* pcaArgv[])
 		if(pcParam[1] == 'h' || pcParam[1] == 'H' || pcParam[1] == '?')
 		{
 			__CLIPARSER_PrintHelp();
-			return StatusFail;
 		}
 		else if(pcParam[1] >= 'A' && pcParam[1] <= 'Z')
 		{

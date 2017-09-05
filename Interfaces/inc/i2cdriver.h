@@ -36,7 +36,7 @@ Revision History ***************************************************************
 */
 #define 	I2C					1	
 #define 	I2C_NAME_STRING		"i2c"
-#define		I2C_FILEPATH		"/dev/i2c-1"
+#define		I2C_FILEPATH		"/dev/i2c-"
 
 /***************************************************************************************
 Data Structure Name	: I2C data type
