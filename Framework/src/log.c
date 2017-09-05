@@ -73,33 +73,35 @@ Returns		:
 Notes		: None
 Published	: No
 */
-void LOG_LogMsg(short sverb, const char* msg, ...)
+void LOG_LogMsg(const char* pcfname, int ilineno, short sverb, const char* msg, ...)
 {
 	va_list argptr;
-	short sstderrflg=0;
+	FILE *pF = stdout;
 
 	if(sverb <= sVerbosity)
 	{
 		if(sverb < LOGS_INFO )
 		{
-			sstderrflg = 1;
+			pF = stderr;
+		}
+		else
+		{ 
+			pF = stdout;
+		}
 
-			if(sverb == LOGS_ERROR)
-				fprintf(stderr, "%s", "ERROR: ");
-			else if(sverb == LOGS_WARN)
-				fprintf(stderr, "%s", "WARN: ");
-		}
+		if(pcfname != NULL)
+			fprintf(pF, "%s:%d | ", pcfname, ilineno);
+
+		if(sverb == LOGS_ERROR)
+			fprintf(pF, "%s", "ERROR: ");
+		else if(sverb == LOGS_WARN)
+			fprintf(pF, "%s", "WARN: ");
 		else if(sverb == LOGS_INFO)
-		{
-			fprintf(stdout, "%s", "INFO: ");
-		}
+			fprintf(pF, "%s", "INFO: ");
 
 		va_start(argptr, msg);
 
-		if(sstderrflg)
-			vfprintf(stderr, msg, argptr);
-		else
-			vfprintf(stdout, msg, argptr);
+		vfprintf(pF, msg, argptr);
 		
 		va_end(argptr);
 	}
